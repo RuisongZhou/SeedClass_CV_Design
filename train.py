@@ -33,6 +33,14 @@ def train(net, train_iter, device, loss, num_epochs, optimizer, debug_steps=200)
                     f"Average Loss: {avg_loss:.4f}, "
                 )
                 running_loss = 0.0
+        if (epoch+1) % save_epoch == 0:
+            #save model
+            state = {'net':net.state_dict(),
+            'optimizer':optimizer.state_dict(),
+            'epoch':epoch
+            }
+            save_path = './output/epoch-{}-loss-{}.pth'.format(epoch, avg_loss)
+            torch.save(state, save_path)
 
 def test(net, loader, loss,  device):
     net.eval()
@@ -64,9 +72,9 @@ if __name__ == '__main__':
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    net = preceptron(feature_size=32*32*3, hidden_size=1000, num_classes=len(dataset.classes),device=device)
+    net = preceptron(feature_size=dataset.pca_channel, hidden_size=1280, num_classes=len(dataset.classes),device=device)
 
-    optimizer = torch.optim.SGD(net.params, lr=0.01, momentum=0.9,
+    optimizer = torch.optim.SGD(net.params, lr=0.001, momentum=0.9,
                                 weight_decay=5e-4)
 
 

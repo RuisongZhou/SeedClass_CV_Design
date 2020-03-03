@@ -23,14 +23,18 @@ class preceptron(nn.Module):
         self.params = [self.W1, self.b1, self.W2, self.b2]
 
         # self.layer = nn.Sequential(
-        #     nn.Linear(feature_size, hidden_size),
+        #     nn.Linear(feature_size, hidden_size//2),
         #     nn.ReLU(),
-        #     nn.Linear(hidden_size, num_classes),
+        #     nn.Linear(hidden_size//2, hidden_size),
+        #     nn.ReLU(),
+        #     nn.Linear(hidden_size, num_classes)
         # )
+        self.layer = nn.Linear(feature_size, num_classes)
     def forward(self, x):
-        x = x.view(x.size(0), -1)
-        y = F.relu(torch.matmul(x, self.W1) + self.b1)
-        y = torch.matmul(y, self.W2) + self.b2
+        # x = x.view(x.size(0), -1)
+        # y = F.relu(torch.matmul(x, self.W1) + self.b1)
+        # y = torch.matmul(y, self.W2) + self.b2
+        y = self.layer(x)
         y = F.softmax(y,dim=1)
         return y
 
