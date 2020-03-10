@@ -4,6 +4,8 @@ class LinearClassifier(object):
 
     def __init__(self ):
         self.W = None
+        self.W2 = None
+        self.b = None
 
     def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=100,
               batch_size=200,verbose=True ):
@@ -28,7 +30,9 @@ class LinearClassifier(object):
         num_classes = np.max(y) + 1  # assume y takes values 0...K-1 where K is number of classes
         if self.W is None:
             # lazily initialize W
-            self.W = 0.001 * np.random.randn(dim, num_classes)
+            self.W = 0.001 * np.random.randn(dim//10, num_classes)
+            self.W2 = 0.001 * np.random.randn(dim, dim//10)
+            self.b = np.random.randn(dim//10)
 
         loss_history = []
         for it in range(num_iters):
@@ -42,12 +46,13 @@ class LinearClassifier(object):
 
 
             # evaluate loss and gradient
-            loss, grad = self.loss(X_batch, y_batch, reg)
+            loss, grad, grad1, grad2 = self.loss(X_batch, y_batch, reg)
             loss_history.append(loss)
 
             #update grad
             self.W = self.W - learning_rate * grad
-
+            self.W2 = self.W2 - learning_rate * grad1
+            self.b = self.b-learning_rate * grad2
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             if verbose and it % 100 == 0:
@@ -58,7 +63,9 @@ class LinearClassifier(object):
     def predict(self, X):
 
         y_pred = np.zeros(X.shape[0])
-        y_pred = np.argmax(X @ self.W, 1)
+        tmp = X @self.W2 + self.b
+        tmp[tmp<0] =0
+        y_pred = np.argmax(tmp @ self.W, 1)
 
         return y_pred
 

@@ -74,13 +74,13 @@ from models.softmax import Softmax
 results = {}
 best_val = -1
 best_softmax = None
-learning_rates = [1e-7]
-regularization_strengths = [2.5e4]
+learning_rates = [1e-6]
+regularization_strengths = [1000]
 
 for rate in learning_rates:
     for reg in regularization_strengths:
         s = Softmax()
-        s.train(X_train, y_train, learning_rate=rate, reg=reg, num_iters=2000, verbose=True)
+        s.train(X_train, y_train, learning_rate=rate, reg=reg, num_iters=4000, verbose=True)
         y_train_pred = s.predict(X_train)
         y_val_pred = s.predict(X_val)
         val = np.mean(y_val == y_val_pred)
